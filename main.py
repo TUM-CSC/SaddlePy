@@ -37,20 +37,32 @@ class Action(object):
 		return True
 
 
+class Game(object):
+
+	#payoffMatrices = []
+	#dimension
+
+
+	def __init__(self, matrices):
+		self.matrices = matrices
+		self.dimension = self.matrices[0].shape
+		self.no_players = len(self.matrices)
+
+
 class ZeroSumGame(object):
 	'''
 	basic class for zero-sum/single matrix games
 	'''
 
-	matrix = None
-	no_players = -1
-	dimension = -1
+	#matrix = None
+	#no_players = -1
+	#dimension = -1
 
 	def __init__(self, matrix, name=None):
-			self.name = name
-			self.matrix = matrix
-			self.dimension = self.matrix.shape
-			self.no_players = len(self.matrix.shape)
+		self.name = name
+		self.matrix = matrix
+		self.dimension = self.matrix.shape
+		self.no_players = len(self.matrix.shape)
 
 	def __str__(self):
 		return str(self.matrix)
@@ -65,30 +77,37 @@ class Subgame(object):
 	'''
 	basic class for sub games
 	'''
-	no_players = -1
-	#TODO dimension?  (i.e. subgame is 2x1)
-	indices = None
-	matrix = None		# payoff matrix of the game
-	submatrix = None	
 
-	def __init__(self, matrix, indices):
+
+	def __init__(self, matrices, indices):
 		self.no_players = len(indices)
 		self.indices = indices
-		self.matrix = matrix
-		self.computeSubgame()
+		self.matrices = matrices
+		self.submatrices = [None]*self.no_players
+		self.computeAllSubgames()
 
 	def __str__(self):
-		return str(self.submatrix)
+		string = ""
+		for i in self.submatrices:
+			string = string + "\n" + str(i) + "\n"
+		return string
 
-	''' function that computes the subgame payoff matrix for given game and indices 
+
+	''' function that computes the subgame payoff matrix for given game and indices
+		@param i - player id
 	'''
-	def computeSubgame(self):
-		self.submatrix = self.matrix
-		print "Compute subgame..."
+	def computeSubgame(self, player_id):
+		self.submatrices[player_id] = self.matrices[player_id]
+		#self.submatrix = self.matrix
+		#print "Compute subgame..."
 		for i in range(len(self.indices)):
 			#print str(i) + ", " + str(self.indices[i])
-			self.submatrix = self.submatrix.take(self.indices[i], axis=i)
+			self.submatrices[player_id] = self.submatrices[player_id].take(self.indices[i], axis=i)
 			#print "\n New subgame: \n" + str(self.submatrix)
+
+	def computeAllSubgames(self):
+		for i in range(self.no_players):
+			self.computeSubgame(i)
 
 
 	''' function to add a new action and return the new, bigger subgame '''
@@ -101,7 +120,49 @@ class Subgame(object):
 		#print self.indices
 		#print "Subgame " + str(self.submatrix)
 
-		self.computeSubgame()
+		self.computeAllSubgames()
+
+#class Subgame(object):
+#	'''
+#	basic class for sub games
+#	'''
+#	no_players = -1
+#	#TODO dimension?  (i.e. subgame is 2x1)
+#	indices = None
+#	matrix = None		# payoff matrix of the game
+#	submatrix = None	
+#
+#	def __init__(self, matrix, indices):
+#		self.no_players = len(indices)
+#		self.indices = indices
+#		self.matrix = matrix
+#		self.computeSubgame()
+#
+#	def __str__(self):
+#		return str(self.submatrix)
+#
+#	''' function that computes the subgame payoff matrix for given game and indices 
+#	'''
+#	def computeSubgame(self):
+#		self.submatrix = self.matrix
+#		print "Compute subgame..."
+#		for i in range(len(self.indices)):
+#			#print str(i) + ", " + str(self.indices[i])
+#			self.submatrix = self.submatrix.take(self.indices[i], axis=i)
+#			#print "\n New subgame: \n" + str(self.submatrix)
+#
+#
+#	''' function to add a new action and return the new, bigger subgame '''
+#	def addActions(self, player_id, action_id_list):
+#		print "Add action " + str(action_id_list) + " for player " + str(player_id)
+#		self.indices[player_id].extend(action_id_list)
+#		list_tmp = set(self.indices[player_id])
+#		self.indices[player_id] = sorted(list_tmp)			# ugly type cast. Is there a way to get rid of it?
+#
+#		#print self.indices
+#		#print "Subgame " + str(self.submatrix)
+#
+#		self.computeSubgame()
 
 
 class StrictSaddle(object):
@@ -122,7 +183,7 @@ if __name__ == '__main__':
 	'''
 	def computeGSP(game, indices):
 
-		subgame = Subgame(game.matrix, indices)
+		subgame = Subgame(game.matrices, indices)
 
 		change_flag = True
 
@@ -133,6 +194,7 @@ if __name__ == '__main__':
 			change_flag = False
 
 			for i in range(game.no_players):
+				print "Subgame prior to finding dominated actions: \n" + str(subgame)
 				notDominatedActions = findNotDominatedActions(game, indices, subgame, i)		# needs to add each action consecutively
 				if notDominatedActions:
 					change_flag = True
@@ -147,32 +209,32 @@ if __name__ == '__main__':
 	@return [int] 
 	'''
 	def findNotDominatedActions(game, indices, subgame, player):
-		print "Calculating dominating action..."
+		#print "Calculating dominating action..."
 		notDominatedActions = []
 
 	# computing subgame with all actions for player i
-		print "Indices " + str(indices)
+		#print "Indices " + str(indices)
 		allIndices = list(indices)
-		print "Dimension for player " + str(game.dimension[player])
+		#print "Dimension for player " + str(game.dimension[player])
 		# indices for the subgame that contains the given subgame and all actions of player i
 		allIndices[player] = range(game.dimension[player])
-		print "All indices " + str(allIndices)
+		#print "All indices " + str(allIndices)
 		# indices for the subgame that contains all actions _outside_ of the given subgame for player i
 		feasibleIndices = list(set(range(game.dimension[player])) - set(indices[player]))
-		print "Feasible indices " + str(feasibleIndices)
-		print "Game Matrix " + str(game.matrix)
+		#print "Feasible indices " + str(feasibleIndices)
+		#print "Game Matrix " + str(game.matrix)
 
-		comparisonSubgame = Subgame(game.matrix, allIndices)
+		comparisonSubgame = Subgame(game.matrices, allIndices)
 
 	# selecting one row (or column etc) from the current subgame and one outside and comparing them
 		for index in feasibleIndices:
-			print "Feasible index: " + str(index)
-			feasibleAction = comparisonSubgame.submatrix.take(index, axis=player)
+			#print "Feasible index: " + str(index)
+			feasibleAction = comparisonSubgame.submatrices[player].take(index, axis=player)
 			print "Feasible action: " + str(feasibleAction)
 
 			is_dominated = False
 			for gsp_index in indices[player]:
-				gsp_action = comparisonSubgame.submatrix.take(gsp_index, axis=player)
+				gsp_action = comparisonSubgame.submatrices[player].take(gsp_index, axis=player)
 				print "GSP action: " + str(gsp_action)
 				# add if feasibleAction is not dominated by any gsp_action
 				if np.greater(gsp_action, feasibleAction).all():
@@ -200,7 +262,9 @@ if __name__ == '__main__':
 
 
 	game = ZeroSumGame(np.matrix('0 1 0; 1 0 0.5; 0 1 0'))
-	game_article_small = ZeroSumGame(np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5'))
+	#game_article_small = ZeroSumGame(np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5'))
+	payoff_player_1 = np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5')
+	game_article_small = Game([payoff_player_1, np.negative(payoff_player_1)])
 	game_article_large = ZeroSumGame(np.matrix('4 2 3 5; 2 4 5 3; 2 2 3 6; 1 3 1 4; 2 1 6 1'))
 	#subgame_tmp = Subgame(np.matrix('3; 2'), [[0,1],[0]])
 	first_gsp = computeGSP(game_article_small, [[0,1],[0]])
