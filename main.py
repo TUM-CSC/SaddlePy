@@ -72,33 +72,33 @@ class Subgame(object):
 		self.no_players = len(indices)
 		self.indices = indices
 		self.matrix = matrix
-		self.submatrix = self.computeSubgame()
+		self.computeSubgame()
 
 	def __str__(self):
 		return str(self.submatrix)
 
-	''' function that computes the subgame payoff matrix for given game and indices '''
+	''' function that computes the subgame payoff matrix for given game and indices 
+	'''
 	def computeSubgame(self):
 		self.submatrix = self.matrix
 		print "Compute subgame..."
 		for i in range(len(self.indices)):
 			print str(i) + ", " + str(self.indices[i])
 			self.submatrix = self.submatrix.take(self.indices[i], axis=i)
-			print "New subgame: " + str(self.submatrix)
-		return self.submatrix
+			print "\n New subgame: \n" + str(self.submatrix)
+
 
 	''' function to add a new action and return the new, bigger subgame '''
-	def addAction(self, player_id, action_id):
-		print "Add action " + str(action_id) + " for player " + str(player_id)
-		print self.indices
-		print self.indices[player_id]
-		self.indices[player_id].append(action_id)
-		self.indices[player_id].sort()
+	def addActions(self, player_id, action_id_list):
+		print "Add action " + str(action_id_list) + " for player " + str(player_id)
+		self.indices[player_id].extend(action_id_list)
+		list_tmp = set(self.indices[player_id])
+		self.indices[player_id] = sorted(list_tmp)			# ugly type cast. Is there a way to get rid of it?
 
 		print self.indices
 		print "Subgame " + str(self.submatrix)
 
-		self.submatrix = self.computeSubgame()
+		self.computeSubgame()
 
 
 class StrictSaddle(object):
@@ -115,29 +115,40 @@ if __name__ == '__main__':
 
 	'''
 	@param indices: lists of lists of integers [[0,1],[1]] is the sub matrix that takes the first two rows and the second column on the game
+	@return Subgame - GSP for the given starting point 
 	'''
 	def computeGSP(game, indices):
 
-		subgame = Subgame(game.matrix, indices) 
+		subgame = Subgame(game.matrix, indices)
+
+		change_flag = True
 
 		print "Compute GSP for game\n " + str(game) + "\n with subgame \n" + str(subgame) + "\n from indices " + str(indices)
 		print "Game with " + str(game.no_players) + " players of dimension " + str(game.dimension) + "."
 
-		for i in range(game.no_players):
-			dominatingActions = findDominatingAction(game, indices, subgame)
-			print subgame.indices
-			print "Indices: " + str(subgame.indices[i]) 
-			#subgame.indices[i].add(dominatingActions)
-			
-			print i
-		#TODO
-		gsp = subgame
-		return gsp
+		while change_flag:
+			change_flag = False
 
-	def findDominatingAction(game, indices, subgame):
+			for i in range(game.no_players):
+				notDominatedActions = findNotDominatedActions(game, indices, subgame, i)		# needs to add each action consecutively
+				if notDominatedActions:
+					change_flag = True
+				subgame.addActions(i, notDominatedActions)
+
+		return subgame
+
+	'''
+	function that finds actions that are not strictly dominated by a actions due to chosen subgame in one dimension
+	@param game ZeroSumGame (later on probably any game?)
+	@param player int - player ID
+	@return [int] 
+	'''
+	def findNotDominatedActions(game, indices, subgame, player):
 		print "Calculating dominating action..."
+		notDominatedActions = []
 		#TODO
-		return None
+		return notDominatedActions
+
 	
 	''' function that checks what GSPs do not contain any of the other given GSPs '''
 	def findMinimalGSP(gsp_list): # inclusion minimal!
