@@ -153,6 +153,7 @@ if __name__ == '__main__':
 
 		return subgame
 
+
 	'''
 	function that finds actions that are not strictly dominated by a actions due to chosen subgame in one dimension
 	@param game ZeroSumGame (later on probably any game?)
@@ -178,13 +179,14 @@ if __name__ == '__main__':
 		comparisonSubgame = Subgame(game.matrices, allIndices)
 
 	# selecting one row (or column etc) from the current subgame and one outside and comparing them
+		# TODO rename gsp_action to any_action
 		for index in feasibleIndices:
 			#print "Feasible index: " + str(index)
 			feasibleAction = comparisonSubgame.submatrices[player].take(index, axis=player)
 			print "Feasible action: " + str(feasibleAction)
 
 			is_dominated = False
-			for gsp_index in indices[player]:
+			for gsp_index in allIndices[player]:
 				gsp_action = comparisonSubgame.submatrices[player].take(gsp_index, axis=player)
 				print "GSP action: " + str(gsp_action)
 				# add if feasibleAction is not dominated by any gsp_action
@@ -211,13 +213,18 @@ if __name__ == '__main__':
 		return gsp_list
 
 
-	game = ZeroSumGame(np.matrix('0 1 0; 1 0 0.5; 0 1 0'))
+	#game = ZeroSumGame(np.matrix('0 1 0; 1 0 0.5; 0 1 0'))
 	#game_article_small = ZeroSumGame(np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5'))
 	payoff_player_1 = np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5')
 	game_article_small = Game([payoff_player_1, np.negative(payoff_player_1)])
-	game_article_large = ZeroSumGame(np.matrix('4 2 3 5; 2 4 5 3; 2 2 3 6; 1 3 1 4; 2 1 6 1'))
+	#first_gsp = computeGSP(game_article_small, [[0,1],[0]])
+
+	payoff_player_1_large = np.matrix('4 2 3 5; 2 4 5 3; 2 2 3 6; 1 3 1 4; 2 1 6 1')
+	game_article_large = Game([payoff_player_1_large, np.negative(payoff_player_1_large)])
+	gsp_large = computeGSP(game_article_large, [[0], [0]])
+	print "GSP for large matrix " + str(gsp_large)
 	#subgame_tmp = Subgame(np.matrix('3; 2'), [[0,1],[0]])
-	first_gsp = computeGSP(game_article_small, [[0,1],[0]])
+
 	#subgame = Subgame(game, [[0,1], [2]])
 	# subgame.computeSubgame() 		would be nice if this would be the identity function
 	#print "Subgame payoff matrix computed"
