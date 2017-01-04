@@ -39,9 +39,21 @@ class ZeroSumGame(object):
 	basic class for zero-sum/single matrix games
 	'''
 
+	matrix = None
+	no_players = -1
+	dimension = -1
+
 	def __init__(self, matrix, name=None):
-	        self.name = name
-	        self.matrix = matrix
+			self.name = name
+			self.matrix = matrix
+			self.dimension = self.matrix.shape
+			self.no_players = len(self.matrix.shape)
+
+	def __str__(self):
+		return str(self.matrix)
+
+	def __repr__(self):
+		return repr(self.matrix)
 	
 	def getPayOffMatrix(self):
 	        return self.matrix
@@ -53,24 +65,27 @@ class Subgame(object):
 	no_players = -1
 	#TODO dimension?  (i.e. subgame is 2x1)
 	indices = None
-	game = None
-	subgame = None		#necessary??
+	matrix = None		# payoff matrix of the game
+	submatrix = None	
 
-	def __init__(self, game, indices):
+	def __init__(self, matrix, indices):
 		self.no_players = len(indices)
 		self.indices = indices
-		self.game = game
-		self.subgame = self.computeSubgame()
+		self.matrix = matrix
+		self.submatrix = self.computeSubgame()
+
+	def __str__(self):
+		return str(self.submatrix)
 
 	''' function that computes the subgame payoff matrix for given game and indices '''
 	def computeSubgame(self):
-		self.subgame = self.game
+		self.submatrix = self.matrix
 		print "Compute subgame..."
 		for i in range(len(self.indices)):
 			print str(i) + ", " + str(self.indices[i])
-			self.subgame = self.subgame.take(self.indices[i], axis=i)
-			print "New subgame: " + str(self.subgame)
-		return self.subgame
+			self.submatrix = self.submatrix.take(self.indices[i], axis=i)
+			print "New subgame: " + str(self.submatrix)
+		return self.submatrix
 
 	''' function to add a new action and return the new, bigger subgame '''
 	def addAction(self, player_id, action_id):
@@ -81,9 +96,9 @@ class Subgame(object):
 		self.indices[player_id].sort()
 
 		print self.indices
-		print "Subgame " + str(self.subgame)
+		print "Subgame " + str(self.submatrix)
 
-		self.subgame = self.computeSubgame()		# updates the subgame payoff matrix. Maybe better/faster to just add the columns/rows
+		self.submatrix = self.computeSubgame()
 
 
 class StrictSaddle(object):
@@ -98,11 +113,31 @@ class StrictSaddle(object):
 if __name__ == '__main__':
 
 
-	def computeGSP(matrix, index, element=None):
-		element = matrix[index]
-		# print str(position)
+	'''
+	@param indices: lists of lists of integers [[0,1],[1]] is the sub matrix that takes the first two rows and the second column on the game
+	'''
+	def computeGSP(game, indices):
+
+		subgame = Subgame(game.matrix, indices) 
+
+		print "Compute GSP for game\n " + str(game) + "\n with subgame \n" + str(subgame) + "\n from indices " + str(indices)
+		print "Game with " + str(game.no_players) + " players of dimension " + str(game.dimension) + "."
+
+		for i in range(game.no_players):
+			dominatingActions = findDominatingAction(game, indices, subgame)
+			print subgame.indices
+			print "Indices: " + str(subgame.indices[i]) 
+			#subgame.indices[i].add(dominatingActions)
+			
+			print i
 		#TODO
-		return [set([1,2]), set([2])]
+		gsp = subgame
+		return gsp
+
+	def findDominatingAction(game, indices, subgame):
+		print "Calculating dominating action..."
+		#TODO
+		return None
 	
 	''' function that checks what GSPs do not contain any of the other given GSPs '''
 	def findMinimalGSP(gsp_list): # inclusion minimal!
@@ -116,12 +151,15 @@ if __name__ == '__main__':
 		return gsp_list
 
 
-	game = np.matrix('0 1 0; 1 0 0.5; 0 1 0')
-	subgame = Subgame(game, [[0,1], [2]])
-	print "Subgame initialized"
+	game = ZeroSumGame(np.matrix('0 1 0; 1 0 0.5; 0 1 0'))
+	game_article_small = ZeroSumGame(np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5'))
+	game_article_large = ZeroSumGame(np.matrix('4 2 3 5; 2 4 5 3; 2 2 3 6; 1 3 1 4; 2 1 6 1'))
+	#subgame_tmp = Subgame(np.matrix('3; 2'), [[0,1],[0]])
+	first_gsp = computeGSP(game_article_small, [[0,1],[0]])
+	#subgame = Subgame(game, [[0,1], [2]])
 	# subgame.computeSubgame() 		would be nice if this would be the identity function
-	print "Subgame payoff matrix computed"
-	subgame.addAction(1,1)		# player 1 (2nd player!!) adds action 1
+	#print "Subgame payoff matrix computed"
+	#subgame.addAction(1,1)		# player 1 (2nd player!!) adds action 1
 	#subgame.addAction(0,2)		# player 1 (2nd player!!) adds action 2
 
 	#computeGSP(game, (0,0))	#TODO
@@ -134,7 +172,7 @@ if __name__ == '__main__':
 	gsp_2 = [set([1,2]), set([1,2])]
 	gsp_3 = [set([3]), set([1,2])]
 	gsp_list_test = list([gsp_1, gsp_2, gsp_3])
-	print findMinimalGSP(gsp_list_test)
+	#print findMinimalGSP(gsp_list_test)
 
 	#for i,x in np.ndenumerate(game):		
 	#		gsp_list.append(computeGSP(game,i,x))
