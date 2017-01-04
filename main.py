@@ -3,6 +3,9 @@
 '''
 import numpy as np
 
+
+# TODO convert ZeroSumGame in Bimatrix game, n-matrix game?
+
 class Action(object):
 	'''
 	basic class for actions in sub-games
@@ -83,9 +86,9 @@ class Subgame(object):
 		self.submatrix = self.matrix
 		print "Compute subgame..."
 		for i in range(len(self.indices)):
-			print str(i) + ", " + str(self.indices[i])
+			#print str(i) + ", " + str(self.indices[i])
 			self.submatrix = self.submatrix.take(self.indices[i], axis=i)
-			print "\n New subgame: \n" + str(self.submatrix)
+			#print "\n New subgame: \n" + str(self.submatrix)
 
 
 	''' function to add a new action and return the new, bigger subgame '''
@@ -95,8 +98,8 @@ class Subgame(object):
 		list_tmp = set(self.indices[player_id])
 		self.indices[player_id] = sorted(list_tmp)			# ugly type cast. Is there a way to get rid of it?
 
-		print self.indices
-		print "Subgame " + str(self.submatrix)
+		#print self.indices
+		#print "Subgame " + str(self.submatrix)
 
 		self.computeSubgame()
 
@@ -123,8 +126,8 @@ if __name__ == '__main__':
 
 		change_flag = True
 
-		print "Compute GSP for game\n " + str(game) + "\n with subgame \n" + str(subgame) + "\n from indices " + str(indices)
-		print "Game with " + str(game.no_players) + " players of dimension " + str(game.dimension) + "."
+		#print "Compute GSP for game\n " + str(game) + "\n with subgame \n" + str(subgame) + "\n from indices " + str(indices)
+		#print "Game with " + str(game.no_players) + " players of dimension " + str(game.dimension) + "."
 
 		while change_flag:
 			change_flag = False
@@ -146,7 +149,41 @@ if __name__ == '__main__':
 	def findNotDominatedActions(game, indices, subgame, player):
 		print "Calculating dominating action..."
 		notDominatedActions = []
-		#TODO
+
+	# computing subgame with all actions for player i
+		print "Indices " + str(indices)
+		allIndices = list(indices)
+		print "Dimension for player " + str(game.dimension[player])
+		# indices for the subgame that contains the given subgame and all actions of player i
+		allIndices[player] = range(game.dimension[player])
+		print "All indices " + str(allIndices)
+		# indices for the subgame that contains all actions _outside_ of the given subgame for player i
+		feasibleIndices = list(set(range(game.dimension[player])) - set(indices[player]))
+		print "Feasible indices " + str(feasibleIndices)
+		print "Game Matrix " + str(game.matrix)
+
+		comparisonSubgame = Subgame(game.matrix, allIndices)
+
+	# selecting one row (or column etc) from the current subgame and one outside and comparing them
+		for index in feasibleIndices:
+			print "Feasible index: " + str(index)
+			feasibleAction = comparisonSubgame.submatrix.take(index, axis=player)
+			print "Feasible action: " + str(feasibleAction)
+
+			is_dominated = False
+			for gsp_index in indices[player]:
+				gsp_action = comparisonSubgame.submatrix.take(gsp_index, axis=player)
+				print "GSP action: " + str(gsp_action)
+				# add if feasibleAction is not dominated by any gsp_action
+				if np.greater(gsp_action, feasibleAction).all():
+					is_dominated = True
+					break
+			if not is_dominated:
+				notDominatedActions.append(index)
+
+		print "Not dominated actions " + str(notDominatedActions)
+		
+		# TODO work in progress, as it currently doesn't work for Zero Sum Games!!
 		return notDominatedActions
 
 	
