@@ -4,8 +4,8 @@
 import numpy as np
 
 
-# TODO convert ZeroSumGame in Bimatrix game, n-matrix game?
 
+# TODO obsolete??
 class Action(object):
 	'''
 	basic class for actions in sub-games
@@ -39,10 +39,6 @@ class Action(object):
 
 class Game(object):
 
-	#payoffMatrices = []
-	#dimension
-
-
 	def __init__(self, matrices):
 		self.matrices = matrices
 		self.dimension = self.matrices[0].shape
@@ -53,10 +49,6 @@ class ZeroSumGame(object):
 	'''
 	basic class for zero-sum/single matrix games
 	'''
-
-	#matrix = None
-	#no_players = -1
-	#dimension = -1
 
 	def __init__(self, matrix, name=None):
 		self.name = name
@@ -73,11 +65,11 @@ class ZeroSumGame(object):
 	def getPayOffMatrix(self):
 	        return self.matrix
 
+
 class Subgame(object):
 	'''
 	basic class for sub games
 	'''
-
 
 	def __init__(self, matrices, indices):
 		self.no_players = len(indices)
@@ -122,47 +114,6 @@ class Subgame(object):
 
 		self.computeAllSubgames()
 
-#class Subgame(object):
-#	'''
-#	basic class for sub games
-#	'''
-#	no_players = -1
-#	#TODO dimension?  (i.e. subgame is 2x1)
-#	indices = None
-#	matrix = None		# payoff matrix of the game
-#	submatrix = None	
-#
-#	def __init__(self, matrix, indices):
-#		self.no_players = len(indices)
-#		self.indices = indices
-#		self.matrix = matrix
-#		self.computeSubgame()
-#
-#	def __str__(self):
-#		return str(self.submatrix)
-#
-#	''' function that computes the subgame payoff matrix for given game and indices 
-#	'''
-#	def computeSubgame(self):
-#		self.submatrix = self.matrix
-#		print "Compute subgame..."
-#		for i in range(len(self.indices)):
-#			#print str(i) + ", " + str(self.indices[i])
-#			self.submatrix = self.submatrix.take(self.indices[i], axis=i)
-#			#print "\n New subgame: \n" + str(self.submatrix)
-#
-#
-#	''' function to add a new action and return the new, bigger subgame '''
-#	def addActions(self, player_id, action_id_list):
-#		print "Add action " + str(action_id_list) + " for player " + str(player_id)
-#		self.indices[player_id].extend(action_id_list)
-#		list_tmp = set(self.indices[player_id])
-#		self.indices[player_id] = sorted(list_tmp)			# ugly type cast. Is there a way to get rid of it?
-#
-#		#print self.indices
-#		#print "Subgame " + str(self.submatrix)
-#
-#		self.computeSubgame()
 
 
 class StrictSaddle(object):
@@ -245,7 +196,6 @@ if __name__ == '__main__':
 
 		print "Not dominated actions " + str(notDominatedActions)
 		
-		# TODO work in progress, as it currently doesn't work for Zero Sum Games!!
 		return notDominatedActions
 
 	
@@ -274,7 +224,7 @@ if __name__ == '__main__':
 	#subgame.addAction(1,1)		# player 1 (2nd player!!) adds action 1
 	#subgame.addAction(0,2)		# player 1 (2nd player!!) adds action 2
 
-	#computeGSP(game, (0,0))	#TODO
+	#computeGSP(game, (0,0))
 	#computeGSP(game, (2,1))
 	#computeGSP(game, (1,2))
 	
