@@ -207,24 +207,22 @@ if __name__ == '__main__':
 		return notDominatedActions
 
 	
-	''' function that checks what GSPs do not contain any of the other given GSPs '''
-	#TODO !!! does not remove all necessary GSPs !!!
-	def findMinimalGSP(gsp_list): # inclusion minimal!
-		print gsp_list
+	''' function that finds inclusion minimal GSPs from a given list of GSPs
+		@param gsp_list [Subgame] - list of subgames
+	'''
+	def findMinimalGSP(gsp_list):
+		minimal_gsp_list = list(gsp_list)				# necessary as iteration through the list is faulty due to removal of elements otherwise
 		for i in gsp_list:
-			#print str(i)
 			for j in gsp_list:
 				gsp_matrix_i = i.indices
 				gsp_matrix_j = j.indices
-				#print "i.indices: " + str(gsp_matrix_i)
-				#print "j.indices: " + str(gsp_matrix_j)
-				#print str(j)
-				if i.indices < j.indices and i.indices <= j.indices:		#TODO should now work for more than 2 players, check !!
-					print "GSP " + str(j) + " was removed."
-					gsp_list.remove(j)
-				#elif i.indices <= j.indices and i.indices < j.indices:		#TODO is this necessary or not?
-				#	gsp_list.remove(j)
-		return gsp_list
+				# check subset property via comparing the indices (!! only yields correct result for GSPs of the same game !!)
+				if i.indices < j.indices and i.indices <= j.indices:
+					# if GSP j is a superset of GSP i, it gets removed from the minimal GSP set
+					if j in minimal_gsp_list:
+						#print "GSP " + str(j) + " was removed."
+						minimal_gsp_list.remove(j)
+		return minimal_gsp_list
 
 
 	def computeStrictSaddles(game):
