@@ -45,6 +45,7 @@ class Game(object):
 		self.no_players = len(self.matrices)
 
 
+# TODO obsolete?
 class ZeroSumGame(object):
 	'''
 	basic class for zero-sum/single matrix games
@@ -84,8 +85,7 @@ class Subgame(object):
 			string = string + "\n" + str(i) + "\n"
 		return string
 
-	def __eq__(self, other):		#TODO check if it works as expected
-		#return False
+	def __eq__(self, other):
 		if self.matrices == other.matrices and self.indices == other.indices:
 			return True
 		return False
@@ -96,7 +96,6 @@ class Subgame(object):
 	'''
 	def computeSubgame(self, player_id):
 		self.submatrices[player_id] = self.matrices[player_id]
-		#self.submatrix = self.matrix
 		#print "Compute subgame..."
 		for i in range(len(self.indices)):
 			#print str(i) + ", " + str(self.indices[i])
@@ -113,7 +112,7 @@ class Subgame(object):
 		print "Add action " + str(action_id_list) + " for player " + str(player_id)
 		self.indices[player_id].extend(action_id_list)
 		list_tmp = set(self.indices[player_id])
-		self.indices[player_id] = sorted(list_tmp)			# ugly type cast. Is there a way to get rid of it?
+		self.indices[player_id] = sorted(list_tmp)			# ugly type cast. TODO Is there a way to get rid of it?
 
 		#print self.indices
 		#print "Subgame " + str(self.submatrix)
@@ -121,12 +120,6 @@ class Subgame(object):
 		self.computeAllSubgames()
 
 
-
-class StrictSaddle(object):
-	'''
-	basic class for strict saddles
-	representation: list of column and row indices
-	'''
 
 
 
@@ -174,9 +167,11 @@ if __name__ == '__main__':
 		#print "Indices " + str(indices)
 		allIndices = list(indices)
 		#print "Dimension for player " + str(game.dimension[player])
+
 		# indices for the subgame that contains the given subgame and all actions of player i
 		allIndices[player] = range(game.dimension[player])
 		#print "All indices " + str(allIndices)
+
 		# indices for the subgame that contains all actions _outside_ of the given subgame for player i
 		feasibleIndices = list(set(range(game.dimension[player])) - set(indices[player]))
 		#print "Feasible indices " + str(feasibleIndices)
@@ -185,7 +180,6 @@ if __name__ == '__main__':
 		comparisonSubgame = Subgame(game.matrices, allIndices)
 
 	# selecting one row (or column etc) from the current subgame and one outside and comparing them
-		# TODO rename gsp_action to any_action
 		for index in feasibleIndices:
 			#print "Feasible index: " + str(index)
 			feasibleAction = comparisonSubgame.submatrices[player].take(index, axis=player)
@@ -193,10 +187,9 @@ if __name__ == '__main__':
 
 			is_dominated = False
 			for gsp_index in allIndices[player]:
-				gsp_action = comparisonSubgame.submatrices[player].take(gsp_index, axis=player)
-				print "GSP action: " + str(gsp_action)
+				action = comparisonSubgame.submatrices[player].take(gsp_index, axis=player)
 				# add if feasibleAction is not dominated by any gsp_action
-				if np.greater(gsp_action, feasibleAction).all():
+				if np.greater(action, feasibleAction).all():
 					is_dominated = True
 					break
 			if not is_dominated:
@@ -240,49 +233,14 @@ if __name__ == '__main__':
 		return gsp_list
 
 
-	#game = ZeroSumGame(np.matrix('0 1 0; 1 0 0.5; 0 1 0'))
-	#game_article_small = ZeroSumGame(np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5'))
+	game = Game([np.matrix('0 1 0; 1 0 0.5; 0 1 0'), np.negative(np.matrix('0 1 0; 1 0 0.5; 0 1 0'))])
 	payoff_player_1 = np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5')
 	game_article_small = Game([payoff_player_1, np.negative(payoff_player_1)])
-	#first_gsp = computeGSP(game_article_small, [[0,1],[0]])
 
 	payoff_player_1_large = np.matrix('4 2 3 5; 2 4 5 3; 2 2 3 6; 1 3 1 4; 2 1 6 1')
 	game_article_large = Game([payoff_player_1_large, np.negative(payoff_player_1_large)])
-	#gsp_large = computeGSP(game_article_large, [[0], [0]])
-	#print "GSP for large matrix " + str(gsp_large)
-	#subgame_tmp = Subgame(np.matrix('3; 2'), [[0,1],[0]])
 	strict_saddles = computeStrictSaddles(game_article_small)
 	print "Strict Saddles: " + "\n--------------\n".join([str(s) for s in strict_saddles])
 
-	#subgame = Subgame(game, [[0,1], [2]])
 	# subgame.computeSubgame() 		would be nice if this would be the identity function
-	#print "Subgame payoff matrix computed"
-	#subgame.addAction(1,1)		# player 1 (2nd player!!) adds action 1
-	#subgame.addAction(0,2)		# player 1 (2nd player!!) adds action 2
 
-	#computeGSP(game, (0,0))
-	#computeGSP(game, (2,1))
-	#computeGSP(game, (1,2))
-	
-	gsp_list = list()
-
-	gsp_1 = [set([1,2]), set([2])]
-	gsp_2 = [set([1,2]), set([1,2])]
-	gsp_3 = [set([3]), set([1,2])]
-	gsp_list_test = list([gsp_1, gsp_2, gsp_3])
-	#print findMinimalGSP(gsp_list_test)
-
-	#for i,x in np.ndenumerate(game):		
-	#		gsp_list.append(computeGSP(game,i,x))
-	# print repr(gsp_list)
-
-	action1 = Action([0,1,1,2])
-	action2 = Action([1,2,2,3])
-	action3 = Action([0,1,1,3])
-	action4 = Action([0,1,0])
-
-	#print "1 dominates 2?  " + str(action1.sdominates(action2))
-	#print "2 dominates 1?  " + str(action2.sdominates(action1))
-	#print "3 dominates 1?  " + str(action3.sdominates(action1))
-	#print "4 dominates 1?  " + str(action4.sdominates(action1))
-	#print "2 dominates 3?  " + str(action2.sdominates(action3))
