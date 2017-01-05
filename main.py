@@ -84,6 +84,12 @@ class Subgame(object):
 			string = string + "\n" + str(i) + "\n"
 		return string
 
+	def __eq__(self, other):		#TODO check if it works as expected
+		#return False
+		if self.matrices == other.matrices and self.indices == other.indices:
+			return True
+		return False
+
 
 	''' function that computes the subgame payoff matrix for given game and indices
 		@param i - player id
@@ -202,14 +208,37 @@ if __name__ == '__main__':
 
 	
 	''' function that checks what GSPs do not contain any of the other given GSPs '''
+	#TODO !!! does not remove all necessary GSPs !!!
 	def findMinimalGSP(gsp_list): # inclusion minimal!
 		print gsp_list
 		for i in gsp_list:
+			#print str(i)
 			for j in gsp_list:
-				if i[0] < j[0] and i[1] <= j[1]:		#TODO for more than 2 players, iterate over m dimensions
+				gsp_matrix_i = i.indices
+				gsp_matrix_j = j.indices
+				#print "i.indices: " + str(gsp_matrix_i)
+				#print "j.indices: " + str(gsp_matrix_j)
+				#print str(j)
+				if i.indices < j.indices and i.indices <= j.indices:		#TODO should now work for more than 2 players, check !!
+					print "GSP " + str(j) + " was removed."
 					gsp_list.remove(j)
-				if i[0] <= j[0] and i[1] < j[1]:
-					gsp_list.remove(j)
+				#elif i.indices <= j.indices and i.indices < j.indices:		#TODO is this necessary or not?
+				#	gsp_list.remove(j)
+		return gsp_list
+
+
+	def computeStrictSaddles(game):
+		gsp_list = []
+		for i,x in np.ndenumerate(game.matrices[0]):
+			print str(i) + ", " + str(x)
+			indices = [[j] for j in i]
+			print "indices: " + str(indices)
+			gsp_tmp = computeGSP(game, indices)
+			print "Matrix element " + str(x) + " GSP " + str(gsp_tmp)
+			if not gsp_tmp in gsp_list:
+				gsp_list.append(gsp_tmp)
+
+		gsp_list = findMinimalGSP(gsp_list)
 		return gsp_list
 
 
@@ -221,9 +250,11 @@ if __name__ == '__main__':
 
 	payoff_player_1_large = np.matrix('4 2 3 5; 2 4 5 3; 2 2 3 6; 1 3 1 4; 2 1 6 1')
 	game_article_large = Game([payoff_player_1_large, np.negative(payoff_player_1_large)])
-	gsp_large = computeGSP(game_article_large, [[0], [0]])
-	print "GSP for large matrix " + str(gsp_large)
+	#gsp_large = computeGSP(game_article_large, [[0], [0]])
+	#print "GSP for large matrix " + str(gsp_large)
 	#subgame_tmp = Subgame(np.matrix('3; 2'), [[0,1],[0]])
+	strict_saddles = computeStrictSaddles(game_article_small)
+	print "Strict Saddles: " + "\n--------------\n".join([str(s) for s in strict_saddles])
 
 	#subgame = Subgame(game, [[0,1], [2]])
 	# subgame.computeSubgame() 		would be nice if this would be the identity function
