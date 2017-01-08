@@ -113,10 +113,13 @@ if __name__ == '__main__':
 		gsp_list = findMinimalGSP(gsp_list)
 		return gsp_list
 
-	print "Sys Arguments " + str(sys.argv)
+	#print "Sys Arguments " + str(sys.argv)
 	filename = sys.argv[1]
 
-	print parseGameFromFile(filename)
+
+	#game_matrix = parseGameFromFile(filename)
+	strict_saddles = computeStrictSaddles(parseGameFromFile(filename))
+	# TODO find inclusion minimal GSP does not work
 
 	
 
@@ -128,7 +131,7 @@ if __name__ == '__main__':
 	payoff_player_1_large = np.matrix('4 2 3 5; 2 4 5 3; 2 2 3 6; 1 3 1 4; 2 1 6 1')
 	game_article_large = Game([payoff_player_1_large, np.negative(payoff_player_1_large)])
 	#strict_saddles = computeStrictSaddles(game_article_print)
-	#small "Strict Saddles: " + "\n--------------\n".join([str(s) for s in strict_saddles])
+	print "Strict Saddles: " + "\n--------------\n".join([str(s) for s in strict_saddles])
 
 	# subgame.computeSubgame() 		would be nice if this would be the identity function
 
