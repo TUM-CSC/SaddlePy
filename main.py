@@ -5,6 +5,7 @@ import sys
 import numpy as np
 from game import Game, Subgame
 from parser import parseGameFromFile
+from printer import printToFile
 
 
 
@@ -31,7 +32,7 @@ if __name__ == '__main__':
 			change_flag = False
 
 			for i in range(game.no_players):
-				print "Subgame prior to finding dominated actions: \n" + str(subgame)
+				#print "Subgame prior to finding dominated actions: \n" + str(subgame)
 				notDominatedActions = findNotDominatedActions(game, indices, subgame, i)		# needs to add each action consecutively
 				if notDominatedActions:
 					change_flag = True
@@ -64,7 +65,7 @@ if __name__ == '__main__':
 	# selecting one row (or column etc) from the current subgame and one outside and comparing them
 		for index in feasibleIndices:
 			feasibleAction = comparisonSubgame.submatrices[player].take(index, axis=player)
-			print "Feasible action: " + str(feasibleAction)
+			#print "Feasible action: " + str(feasibleAction)
 
 			is_dominated = False
 			for gsp_index in allIndices[player]:
@@ -76,7 +77,7 @@ if __name__ == '__main__':
 			if not is_dominated:
 				notDominatedActions.append(index)
 
-		print "Not dominated actions " + str(notDominatedActions)
+		#print "Not dominated actions " + str(notDominatedActions)
 		
 		return notDominatedActions
 
@@ -105,24 +106,27 @@ if __name__ == '__main__':
 	def computeStrictSaddles(game):
 		gsp_list = []
 		for i,x in np.ndenumerate(game.matrices[0]):
-			print str(i) + ", " + str(x)
+			#print str(i) + ", " + str(x)
 			indices = [[j] for j in i]
-			print "indices: " + str(indices)
+			#print "indices: " + str(indices)
 			gsp_tmp = computeGSP(game, indices)
-			print "Matrix element " + str(x) + " GSP " + str(gsp_tmp)
+			#print "Matrix element " + str(x) + " GSP " + str(gsp_tmp)
 			if not gsp_tmp in gsp_list:
 				gsp_list.append(gsp_tmp)
 
 		gsp_list = findMinimalGSP(gsp_list)
 		return gsp_list
 
-	#print "Sys Arguments " + str(sys.argv)
-	filename = sys.argv[1]
 
+	filename_in = sys.argv[1]
 
-	#game_matrix = parseGameFromFile(filename)
-	strict_saddles = computeStrictSaddles(parseGameFromFile(filename))
-	# TODO find inclusion minimal GSP does not work
+	game = parseGameFromFile(filename_in)
+	strict_saddles = computeStrictSaddles(game)
+
+	filename_out = filename_in.split('.')[0] + ".saddle"
+
+	printToFile(filename_out, strict_saddles)
+
 
 	
 
@@ -134,7 +138,7 @@ if __name__ == '__main__':
 	payoff_player_1_large = np.matrix('4 2 3 5; 2 4 5 3; 2 2 3 6; 1 3 1 4; 2 1 6 1')
 	game_article_large = Game([payoff_player_1_large, np.negative(payoff_player_1_large)])
 	#strict_saddles = computeStrictSaddles(game_article_print)
-	print "Strict Saddles: " + "\n--------------\n".join([str(s) for s in strict_saddles])
+	#print "Strict Saddles: " + "\n--------------\n".join([str(s) for s in strict_saddles])
 
 	# subgame.computeSubgame() 		would be nice if this would be the identity function
 

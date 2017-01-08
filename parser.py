@@ -7,7 +7,6 @@ def parseGameFromFile(filename):
 	pattern = re.compile("NFG . . \"[^\"]*\" {[^}]*} {([^}]*)}\s*([-0-9].*$)")
 
 
-
 	with open(filename, 'r') as in_file:
 		file_content = in_file.read()
 		
@@ -23,9 +22,6 @@ def parseGameFromFile(filename):
 	dimensions = [no_players]+(dimensions)
 
 	payoff_list = [float(x) for x in match_object.group(2).split()]
-
-	#for i in range(no_players):
-		# TODO parse payoffs for each player	
 
 	payoff_matrix = np.reshape(payoff_list, dimensions, order="F")
 

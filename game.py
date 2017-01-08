@@ -56,7 +56,7 @@ class Subgame(object):
 
 	''' function to add a new action and return the new, bigger subgame '''
 	def addActions(self, player_id, action_id_list):
-		print "Add action " + str(action_id_list) + " for player " + str(player_id)
+		#print "Add action " + str(action_id_list) + " for player " + str(player_id)
 		self.indices[player_id].extend(action_id_list)
 		list_tmp = set(self.indices[player_id])
 		self.indices[player_id] = sorted(list_tmp)			# ugly type cast. TODO Is there a way to get rid of it?
