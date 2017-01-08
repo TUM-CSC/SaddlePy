@@ -1,8 +1,10 @@
 ''' 
 
 '''
+import sys
 import numpy as np
 from game import Game, Subgame
+from parser import parseGameFromFile
 
 
 
@@ -111,6 +113,13 @@ if __name__ == '__main__':
 		gsp_list = findMinimalGSP(gsp_list)
 		return gsp_list
 
+	print "Sys Arguments " + str(sys.argv)
+	filename = sys.argv[1]
+
+	print parseGameFromFile(filename)
+
+	
+
 
 	game = Game([np.matrix('0 1 0; 1 0 0.5; 0 1 0'), np.negative(np.matrix('0 1 0; 1 0 0.5; 0 1 0'))])
 	payoff_player_1 = np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5')
@@ -118,8 +127,8 @@ if __name__ == '__main__':
 
 	payoff_player_1_large = np.matrix('4 2 3 5; 2 4 5 3; 2 2 3 6; 1 3 1 4; 2 1 6 1')
 	game_article_large = Game([payoff_player_1_large, np.negative(payoff_player_1_large)])
-	strict_saddles = computeStrictSaddles(game_article_small)
-	print "Strict Saddles: " + "\n--------------\n".join([str(s) for s in strict_saddles])
+	#strict_saddles = computeStrictSaddles(game_article_print)
+	#small "Strict Saddles: " + "\n--------------\n".join([str(s) for s in strict_saddles])
 
 	# subgame.computeSubgame() 		would be nice if this would be the identity function
 
