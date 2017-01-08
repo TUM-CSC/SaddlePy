@@ -30,6 +30,14 @@ class Subgame(object):
 			return True
 		return False
 
+	def __le__(self, subgame):
+		for i,j in zip(self.indices, subgame.indices):
+			set_i = set(i)
+			set_j = set(j)
+			if not set_i <= set_j: 
+				return False
+		return True
+
 
 	''' function that computes the subgame payoff matrix for given game and indices
 		@param i - player id
@@ -53,3 +61,6 @@ class Subgame(object):
 		list_tmp = set(self.indices[player_id])
 		self.indices[player_id] = sorted(list_tmp)			# ugly type cast. TODO Is there a way to get rid of it?
 		self.computeAllSubgames()
+
+
+

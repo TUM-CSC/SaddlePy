@@ -80,6 +80,8 @@ if __name__ == '__main__':
 		
 		return notDominatedActions
 
+
+
 	
 	''' function that finds inclusion minimal GSPs from a given list of GSPs
 		@param gsp_list [Subgame] - list of subgames
@@ -91,7 +93,8 @@ if __name__ == '__main__':
 				gsp_matrix_i = i.indices
 				gsp_matrix_j = j.indices
 				# check subset property via comparing the indices (!! only yields correct result for GSPs of the same game !!)
-				if i.indices < j.indices and i.indices <= j.indices:
+				#if i.indices < j.indices and i.indices <= j.indices:
+				if i <= j and i != j:
 					# if GSP j is a superset of GSP i, it gets removed from the minimal GSP set
 					if j in minimal_gsp_list:
 						#print "GSP " + str(j) + " was removed."
