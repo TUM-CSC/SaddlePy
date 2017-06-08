@@ -130,11 +130,12 @@ if __name__ == '__main__':
 	for i in strict_saddles:
 		size_list.append(i.getSize()[0])
 
-	out_counter = (str(game.dimension[0]) + ".txt")
+	#print "Print saddle size to file"
+	out_counter = "counters/" + (str(game.dimension[0]) + ".txt")
 	printSaddleSizeToFile(out_counter, size_list[0])
 
 
-
+	#print "Print saddle to file"
 	filename_out = filename_in.split('.')[0] + ".saddle"
 	printSaddlesToFile(filename_out, strict_saddles)
 
