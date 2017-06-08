@@ -5,7 +5,7 @@ import sys
 import numpy as np
 from game import Game, Subgame
 from parser import parseGameFromFile
-from printer import printToFile
+from printer import printSaddlesToFile, printSaddleSizeToFile
 
 
 
@@ -118,17 +118,29 @@ if __name__ == '__main__':
 		return gsp_list
 
 
+
 	filename_in = sys.argv[1]
 
 	game = parseGameFromFile(filename_in)
 	strict_saddles = computeStrictSaddles(game)
 
+
+	# size of the strict saddles. Currently looks only at first player; modify for non-symmetric games
+	size_list = []
+	for i in strict_saddles:
+		size_list.append(i.getSize()[0])
+
+	out_counter = (str(game.dimension[0]) + ".txt")
+	printSaddleSizeToFile(out_counter, size_list[0])
+
+
+
 	filename_out = filename_in.split('.')[0] + ".saddle"
+	printSaddlesToFile(filename_out, strict_saddles)
 
-	printToFile(filename_out, strict_saddles)
 
 
-	
+
 
 
 	game = Game([np.matrix('0 1 0; 1 0 0.5; 0 1 0'), np.negative(np.matrix('0 1 0; 1 0 0.5; 0 1 0'))])

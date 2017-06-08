@@ -1,4 +1,4 @@
-def printToFile(filename, saddles):
+def printSaddlesToFile(filename, saddles):
 
 	saddle_string = ""
 
@@ -20,5 +20,15 @@ def printToFile(filename, saddles):
 		out_file.write(saddle_string)
 		#print "Writing\n" + saddle_string + "to file \'" + filename + "\'"
 		print saddle_string
+
+
+# TODO write non-overwriting!
+def printSaddleSizeToFile(filename, saddlesize):
+
+	with open(filename, 'w') as out_file:
+		size_string = str(saddlesize) + " "	
+		out_file.write(size_string)
+
+
 
 

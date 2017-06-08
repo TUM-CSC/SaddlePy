@@ -64,3 +64,16 @@ class Subgame(object):
 
 
 
+	''' function that returns the size of a subgame 
+		@return int[] where first entry corresponds to first player a.s.o.
+	'''
+	def getSize(self):
+		#sizes = 1
+		sizes = []
+		for i in self.indices:
+		#	sizes = sizes * len(i)
+			sizes.append(len(i))
+		return sizes
+
+
+
