@@ -18,6 +18,7 @@ def printToFile(filename, saddles):
 	with open(filename, 'w') as out_file:
 
 		out_file.write(saddle_string)
-		print "Writing\n" + saddle_string + "to file \'" + filename + "\'"
+		#print "Writing\n" + saddle_string + "to file \'" + filename + "\'"
+		print saddle_string
 
 
