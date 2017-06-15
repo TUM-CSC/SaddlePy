@@ -97,7 +97,7 @@ if __name__ == '__main__':
 			#print "Feasible action: " + str(feasibleAction)
 
 			is_dominated = False
-			for gsp_index in allIndices[player]:
+			for gsp_index in indices[player]:#allIndices[player]: #TODO!!!
 				action = comparisonSubgame.submatrices[player].take(gsp_index, axis=player)
 				# add if feasibleAction is not dominated by any gsp_action
 				if np.greater(action, feasibleAction).all():
@@ -127,6 +127,7 @@ if __name__ == '__main__':
 
 		# indices for the subgame that contains the given subgame and all actions of player i
 		allIndices[player] = range(game.dimension[player])
+		print "player " + str(player) + ", all indices " + str(allIndices[player])
 
 		# indices for the subgame that contains all actions _outside_ of the given subgame for player i
 		feasibleIndices = list(set(range(game.dimension[player])) - set(indices[player]))
@@ -135,20 +136,24 @@ if __name__ == '__main__':
 
 	# selecting one row (or column etc) from the current subgame and one outside and comparing them
 		for index in feasibleIndices:
-			# TODO what are feasible actions?
+			# actions outside of the potential saddle
 			feasibleAction = comparisonSubgame.submatrices[player].take(index, axis=player)
-			#print "Feasible action: " + str(feasibleAction)
+			print "Player " + str(player) + " Feasible action: " + str(feasibleAction) + ", index " + str(index)
 			#is_dominated = True
 			is_dominated = False
-			for gsp_index in allIndices[player]:
+			for gsp_index in indices[player]:#allIndices[player]:
+				print "GSP Index " + str(gsp_index) + "Index " + str(index)
 				action = comparisonSubgame.submatrices[player].take(gsp_index, axis=player)
 				# add if feasibleAction is not dominated by any gsp_action
 				if np.greater_equal(action, feasibleAction).all():  	# change
 					if (index!=gsp_index):
-						#print "Action " + str(action) + " is dominated by " + str(feasibleAction)
+						print "Action " + str(action) + " is dominated by " + str(feasibleAction)
 						is_dominated = True
 						break
+				else:
+					print "Player " + str(player) + ", Action " + str(feasibleAction) + ", index " + str(index) + " is NOT dominated by " + str(action) + ", index " + str(gsp_index)
 			if not is_dominated:
+				print "Append action " + str(feasibleAction) + ", index " + str(index) 
 				notVeryWeaklyDominatedActions.append(index)
 
 		#print "Not dominated actions " + str(notVeryWeaklyDominatedActions)
@@ -200,11 +205,11 @@ if __name__ == '__main__':
 		gsp_list = []
 		gsp_tmp = []
 		for i,x in np.ndenumerate(game.matrices[0]):
-			#print str(i) + ", " + str(x)
+			print str(i) + ", " + str(x)
 			indices = [[j] for j in i]
-			#print "indices: " + str(indices)
+			print "indices: " + str(indices)
 			gsp_tmp = computeVGSP(game, indices)
-			#print "Matrix element " + str(x) + " VGSP " + str(gsp_tmp)
+			print "Matrix element " + str(x) + " VGSP " + str(gsp_tmp)
 			if not gsp_tmp in gsp_list:
 				gsp_list.append(gsp_tmp)
 
