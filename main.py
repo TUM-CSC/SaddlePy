@@ -5,7 +5,7 @@ import sys
 import numpy as np
 from game import Game, Subgame
 from parser import parseGameFromFile
-from printer import printSaddlesToFile, printSaddleSizeToFile, printVeryWeakSaddlesToFile
+from printer import printSaddlesToFile, printSaddleSizeToFile, printVeryWeakSaddlesToFile, printStrictSaddlesToFile
 
 
 
@@ -211,36 +211,49 @@ if __name__ == '__main__':
 		return gsp_list
 
 
-
 	filename_in = sys.argv[1]
+	saddle_type = sys.argv[2]		# s for strict saddles, w for weak saddles, v for very weak saddles
+
 
 	game = parseGameFromFile(filename_in)
-	strict_saddles = computeStrictSaddles(game)
-	veryweak_saddles = computeVeryWeakSaddles(game)
 
+
+	# TODO check if that really makes sense and does what it is supposed to do
+	if ( saddle_type=='v' ):
+		saddles = computeVeryWeakSaddles(game)
+		vws_number = len(saddles)
+
+		filename_out = filename_in.split('.')[0] + ".vsaddle"
+		#printVeryWeakSaddlesToFile(filename_out, saddles)
+
+
+	if ( saddle_type=='s' ):
+		saddles = computeStrictSaddles(game)
+
+		filename_out = filename_in.split('.')[0] + ".saddle"
+		#printStrictSaddlesToFile(filename_out, saddles)
+
+	printSaddlesToFile(filename_out, saddles, saddle_type)
 
 	# size of the strict saddles. Currently looks only at first player; modify for non-symmetric games
 	size_list = []
-	for i in strict_saddles:
+	for i in saddles:
 		size_list.append(i.getSize()[0])
 
-	vws_number = len(veryweak_saddles)
 
-	#print "Print saddle size to file"
-	out_counter = "counters/" + (str(game.dimension[0]) + ".txt")
-	#printSaddleSizeToFile(out_counter, size_list[0])
+	# printing saddle sizes to counter files
+	out_counter = "counters/" + (str(saddle_type) + "_" + str(game.dimension[0]) + ".txt")
+	printSaddleSizeToFile(out_counter, size_list[0])
 
-	out_veryweak_counter = "counters/vws.txt"
-	printSaddleSizeToFile(out_veryweak_counter, vws_number)
+	#out_veryweak_counter = "counters/vws.txt"
+	#printSaddleSizeToFile(out_veryweak_counter, vws_number)
 
 
 	#print "Print saddle to file"
-	filename_out = filename_in.split('.')[0] + ".saddle"
-	printSaddlesToFile(filename_out, strict_saddles)
+
 
 	#print "Print very weak saddle to file"
-	filename_out = filename_in.split('.')[0] + ".vsaddle"
-	printVeryWeakSaddlesToFile(filename_out, veryweak_saddles)
+
 
 
 
