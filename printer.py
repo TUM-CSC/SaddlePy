@@ -28,6 +28,7 @@ def printSaddlesToFile(filename, saddles, saddle_type):
 		#print "Writing\n" + saddle_string + "to file \'" + filename + "\'"
 		print saddle_string
 
+# TODO hopefully obsolete
 def printStrictSaddlesToFile(filename, saddles):
 
 	saddle_string = ""
@@ -51,7 +52,8 @@ def printStrictSaddlesToFile(filename, saddles):
 		#print "Writing\n" + saddle_string + "to file \'" + filename + "\'"
 		print saddle_string
 
-# TODO streamline with strict saddles!!
+
+# TODO hopefully obsolete
 def printVeryWeakSaddlesToFile(filename, saddles):
 
 	saddle_string = ""
