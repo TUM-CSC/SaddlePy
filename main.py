@@ -42,8 +42,6 @@ if __name__ == '__main__':
 
 
 	# TODO could probably be streamlined and done without all this C&P
-	# TODO not functional yet!!
-	# TODO findNotVeryWeaklyDominatedActions needs to be written.
 	'''
 	@param indices: lists of lists of integers [[0,1],[1]] is the sub matrix that takes the first two rows and the second column on the game
 	@return Subgame - GSP for the given starting point 
@@ -97,7 +95,7 @@ if __name__ == '__main__':
 			#print "Feasible action: " + str(feasibleAction)
 
 			is_dominated = False
-			for gsp_index in indices[player]:#allIndices[player]: #TODO!!!
+			for gsp_index in indices[player]: #allIndices[player]: #TODO!!!
 				action = comparisonSubgame.submatrices[player].take(gsp_index, axis=player)
 				# add if feasibleAction is not dominated by any gsp_action
 				if np.greater(action, feasibleAction).all():
@@ -111,7 +109,6 @@ if __name__ == '__main__':
 		return notDominatedActions
 
 
-	# TODO not functional yet!!!
 	'''
 	function that finds actions that are not strictly dominated by a actions due to chosen subgame in one dimension
 	@param game ZeroSumGame (later on probably any game?)
@@ -127,7 +124,7 @@ if __name__ == '__main__':
 
 		# indices for the subgame that contains the given subgame and all actions of player i
 		allIndices[player] = range(game.dimension[player])
-		print "player " + str(player) + ", all indices " + str(allIndices[player])
+		#print "player " + str(player) + ", all indices " + str(allIndices[player])
 
 		# indices for the subgame that contains all actions _outside_ of the given subgame for player i
 		feasibleIndices = list(set(range(game.dimension[player])) - set(indices[player]))
@@ -138,22 +135,20 @@ if __name__ == '__main__':
 		for index in feasibleIndices:
 			# actions outside of the potential saddle
 			feasibleAction = comparisonSubgame.submatrices[player].take(index, axis=player)
-			print "Player " + str(player) + " Feasible action: " + str(feasibleAction) + ", index " + str(index)
+			#print "Player " + str(player) + " Feasible action: " + str(feasibleAction) + ", index " + str(index)
 			#is_dominated = True
 			is_dominated = False
 			for gsp_index in indices[player]:#allIndices[player]:
-				print "GSP Index " + str(gsp_index) + "Index " + str(index)
+				#print "GSP Index " + str(gsp_index) + "Index " + str(index)
 				action = comparisonSubgame.submatrices[player].take(gsp_index, axis=player)
 				# add if feasibleAction is not dominated by any gsp_action
 				if np.greater_equal(action, feasibleAction).all():  	# change
 					if (index!=gsp_index):
-						print "Action " + str(action) + " is dominated by " + str(feasibleAction)
+						#print "Action " + str(action) + " is dominated by " + str(feasibleAction)
 						is_dominated = True
 						break
-				else:
-					print "Player " + str(player) + ", Action " + str(feasibleAction) + ", index " + str(index) + " is NOT dominated by " + str(action) + ", index " + str(gsp_index)
 			if not is_dominated:
-				print "Append action " + str(feasibleAction) + ", index " + str(index) 
+				#print "Append action " + str(feasibleAction) + ", index " + str(index) 
 				notVeryWeaklyDominatedActions.append(index)
 
 		#print "Not dominated actions " + str(notVeryWeaklyDominatedActions)
@@ -199,17 +194,16 @@ if __name__ == '__main__':
 		return gsp_list
 
 
-	# TODO --- not finished!!
-	# TODO write computeVGSP
+	#TODO proper documentation
 	def computeVeryWeakSaddles(game):
 		gsp_list = []
 		gsp_tmp = []
 		for i,x in np.ndenumerate(game.matrices[0]):
-			print str(i) + ", " + str(x)
+			#print str(i) + ", " + str(x)
 			indices = [[j] for j in i]
-			print "indices: " + str(indices)
+			#print "indices: " + str(indices)
 			gsp_tmp = computeVGSP(game, indices)
-			print "Matrix element " + str(x) + " VGSP " + str(gsp_tmp)
+			#print "Matrix element " + str(x) + " VGSP " + str(gsp_tmp)
 			if not gsp_tmp in gsp_list:
 				gsp_list.append(gsp_tmp)
 
@@ -222,7 +216,6 @@ if __name__ == '__main__':
 
 	game = parseGameFromFile(filename_in)
 	strict_saddles = computeStrictSaddles(game)
-	# TODO
 	veryweak_saddles = computeVeryWeakSaddles(game)
 
 
@@ -232,9 +225,6 @@ if __name__ == '__main__':
 		size_list.append(i.getSize()[0])
 
 	vws_number = len(veryweak_saddles)
-	#for i in veryweak_saddles:
-		#i++
-		#vws_size_list.append(i.getSize()[0])
 
 	#print "Print saddle size to file"
 	out_counter = "counters/" + (str(game.dimension[0]) + ".txt")
