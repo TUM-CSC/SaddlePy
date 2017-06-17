@@ -6,7 +6,8 @@ def printSaddlesToFile(filename, saddles, saddle_type):
 		if (saddle_type == "s"):
 			saddle_string = saddle_string + "SS: "
 
-		# TODO weak saddles
+		if (saddle_type == "w"):
+			saddle_string = saddle_string + "WS: "
 
 		if (saddle_type == "v"):
 			saddle_string = saddle_string + "VS: "

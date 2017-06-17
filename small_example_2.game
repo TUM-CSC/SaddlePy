@@ -1,3 +1,3 @@
-NFG 1 D "Test example" { "Player1" "Player2" } { 1 3 } 
+NFG 1 D "El Farol n=3" { "Player1" "Player2" "Player3"} { 2 2 2 } 
 
-1 4 2 5 3 6
+0 0 0 1 0 0 0 1 0 1 1 0 0 0 1 1 0 1 0 1 1 0 0 0
