@@ -1,3 +1,5 @@
+import os.path
+
 '''
 	printer function that prints saddles to a file
 	@param filename - string
@@ -31,12 +33,17 @@ def printSaddlesToFile(filename, saddles):
 	printer function that prints the saddle size to a file (if the file exists the size gets appended)
 	@param filename - string
 	@param saddlesite - int
+	!!! only works if the file already exists !!!
 '''
 def printSaddleSizeToFile(filename, saddlesize):
+
+	#if not os.path.isfile(filename):
+	#	print str(filename) + " does not exist, please create it before running the script!"
 	
-	with open(filename, 'a') as out_file:
-		size_string = str(saddlesize) + " "	
-		out_file.write(size_string)
+	#else:
+		with open(filename, 'a') as out_file:
+			size_string = str(saddlesize) + " "	
+			out_file.write(size_string)
 
 
 
