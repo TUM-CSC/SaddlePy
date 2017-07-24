@@ -1,3 +1,8 @@
+'''
+	printer function that prints saddles to a file
+	@param filename - string
+	@param saddles - list(list(int))
+'''
 def printSaddlesToFile(filename, saddles):
 
 	saddle_string = ""
@@ -22,6 +27,11 @@ def printSaddlesToFile(filename, saddles):
 		print saddle_string
 
 
+'''
+	printer function that prints the saddle size to a file (if the file exists the size gets appended)
+	@param filename - string
+	@param saddlesite - int
+'''
 def printSaddleSizeToFile(filename, saddlesize):
 	
 	with open(filename, 'a') as out_file:

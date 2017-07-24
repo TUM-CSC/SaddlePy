@@ -1,4 +1,7 @@
 class Game(object):
+	'''
+	basic class for strategic normal form games, represented at players with payoff matrices
+	'''
 
 	def __init__(self, matrices):
 		self.matrices = matrices
@@ -30,6 +33,12 @@ class Subgame(object):
 			return True
 		return False
 
+
+	'''
+		comparison function if the subgame is a subgame of the given subgame
+		@param subgame - Subgame the original subgame is compared to
+		@return Boolean - True if game is subgame, False if not
+	'''
 	def __le__(self, subgame):
 		for i,j in zip(self.indices, subgame.indices):
 			set_i = set(i)
@@ -49,6 +58,8 @@ class Subgame(object):
 			self.submatrices[player_id] = self.submatrices[player_id].take(self.indices[i], axis=i)
 
 
+	''' function that computes the subgame payoff matrix for all players
+	'''
 	def computeAllSubgames(self):
 		for i in range(self.no_players):
 			self.computeSubgame(i)
@@ -59,7 +70,7 @@ class Subgame(object):
 		#print "Add action " + str(action_id_list) + " for player " + str(player_id)
 		self.indices[player_id].extend(action_id_list)
 		list_tmp = set(self.indices[player_id])
-		self.indices[player_id] = sorted(list_tmp)			# ugly type cast. TODO Is there a way to get rid of it?
+		self.indices[player_id] = sorted(list_tmp)
 		self.computeAllSubgames()
 
 
@@ -68,10 +79,8 @@ class Subgame(object):
 		@return int[] where first entry corresponds to first player a.s.o.
 	'''
 	def getSize(self):
-		#sizes = 1
 		sizes = []
 		for i in self.indices:
-		#	sizes = sizes * len(i)
 			sizes.append(len(i))
 		return sizes
 

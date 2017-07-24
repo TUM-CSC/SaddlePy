@@ -16,6 +16,7 @@ if __name__ == '__main__':
 
 
 	'''
+	function that computes the smallest GSP that includes a given sub matrix
 	@param indices: lists of lists of integers [[0,1],[1]] is the sub matrix that takes the first two rows and the second column on the game
 	@return Subgame - GSP for the given starting point 
 	'''
@@ -24,9 +25,6 @@ if __name__ == '__main__':
 		subgame = Subgame(game.matrices, indices)
 
 		change_flag = True
-
-		#print "Compute GSP for game\n " + str(game) + "\n with subgame \n" + str(subgame) + "\n from indices " + str(indices)
-		#print "Game with " + str(game.no_players) + " players of dimension " + str(game.dimension) + "."
 
 		while change_flag:
 			change_flag = False
@@ -43,7 +41,7 @@ if __name__ == '__main__':
 
 	'''
 	function that finds actions that are not strictly dominated by a actions due to chosen subgame in one dimension
-	@param game ZeroSumGame (later on probably any game?)
+	@param game Game
 	@param player int - player ID
 	@return [int] 
 	'''
@@ -94,7 +92,6 @@ if __name__ == '__main__':
 				gsp_matrix_i = i.indices
 				gsp_matrix_j = j.indices
 				# check subset property via comparing the indices (!! only yields correct result for GSPs of the same game !!)
-				#if i.indices < j.indices and i.indices <= j.indices:
 				if i <= j and i != j:
 					# if GSP j is a superset of GSP i, it gets removed from the minimal GSP set
 					if j in minimal_gsp_list:
@@ -131,6 +128,7 @@ if __name__ == '__main__':
 	for i in strict_saddles:
 		size_list.append(i.getSize()[0])
 
+
 	#print "Print saddle size to file"
 	out_counter = filename_out + "/counters/" + (str(game.dimension[0]) + ".txt")
 	printSaddleSizeToFile(out_counter, size_list[0])
@@ -141,18 +139,11 @@ if __name__ == '__main__':
 	printSaddlesToFile(filename_out, strict_saddles)
 
 
-
-
-
-
+	# two litlle build in examples
 	game = Game([np.matrix('0 1 0; 1 0 0.5; 0 1 0'), np.negative(np.matrix('0 1 0; 1 0 0.5; 0 1 0'))])
-	payoff_player_1 = np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5')
-	game_article_small = Game([payoff_player_1, np.negative(payoff_player_1)])
+	game_article_small = Game([np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5'), np.negative(np.matrix('3 3 4; 2 3 3; 1 2 3; 2 0 5'))])
 
-	payoff_player_1_large = np.matrix('4 2 3 5; 2 4 5 3; 2 2 3 6; 1 3 1 4; 2 1 6 1')
-	game_article_large = Game([payoff_player_1_large, np.negative(payoff_player_1_large)])
-	#strict_saddles = computeStrictSaddles(game_article_print)
 	#print "Strict Saddles: " + "\n--------------\n".join([str(s) for s in strict_saddles])
 
-	# subgame.computeSubgame() 		would be nice if this would be the identity function
+
 
